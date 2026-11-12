@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>社交媒体数据分析看板</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --text: #172033;
+      --muted: #728096;
+      --line: #e7ecf3;
+      --primary: #5b5bd6;
+      --primary-soft: #eeeeff;
+      --green: #20a875;
+      --orange: #f39b3d;
+      --shadow: 0 14px 35px rgba(37, 48, 74, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .app { max-width: 1240px; margin: 0 auto; padding: 40px 24px 56px; }
+
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 { margin: 0; font-size: clamp(26px, 4vw, 38px); line-height: 1.18; letter-spacing: -0.03em; }
+    .subtitle { margin: 10px 0 0; color: var(--muted); font-size: 15px; }
+
+    .filter-wrap { min-width: 190px; }
+    .filter-wrap label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    select {
+      width: 100%;
+      padding: 12px 40px 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-weight: 650;
+      outline: none;
+      box-shadow: 0 4px 12px rgba(37, 48, 74, 0.04);
+      cursor: pointer;
+    }
+    select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 22px; }
+    .card { background: var(--surface); border: 1px solid rgba(231, 236, 243, 0.8); border-radius: 18px; box-shadow: var(--shadow); }
+    .kpi { padding: 23px; position: relative; overflow: hidden; }
+    .kpi::after { content: ""; position: absolute; right: -20px; top: -25px; width: 90px; height: 90px; border-radius: 50%; background: var(--accent-soft); }
+    .kpi-label { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .kpi-row { display: flex; align-items: center; gap: 13px; margin-top: 15px; }
+    .icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); font-size: 19px; }
+    .kpi-value { font-size: 30px; font-weight: 800; letter-spacing: -0.04em; }
+
+    .main-grid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 22px; margin-bottom: 22px; }
+    .panel { padding: 24px; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .panel-title { margin: 0; font-size: 17px; }
+    .panel-note { color: var(--muted); font-size: 12px; }
+
+    .bars { display: grid; gap: 22px; }
+    .bar-meta { display: flex; justify-content: space-between; margin-bottom: 9px; font-size: 13px; }
+    .bar-name { font-weight: 750; }
+    .bar-value { color: var(--muted); }
+    .track { height: 10px; border-radius: 999px; background: #eef1f6; overflow: hidden; }
+    .fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--bar), color-mix(in srgb, var(--bar) 68%, white)); transition: width 0.45s ease; }
+
+    .summary-list { display: grid; gap: 18px; }
+    .summary-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .summary-left { display: flex; align-items: center; gap: 11px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--dot); box-shadow: 0 0 0 5px color-mix(in srgb, var(--dot) 15%, white); }
+    .summary-label { font-size: 13px; font-weight: 700; }
+    .summary-sub { margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .summary-number { font-size: 14px; font-weight: 800; }
+
+    .table-card { overflow: hidden; }
+    .table-head { padding: 23px 24px 15px; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    th, td { padding: 15px 24px; text-align: left; border-top: 1px solid var(--line); font-size: 13px; }
+    th { color: var(--muted); background: #fbfcfe; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
+    td:nth-child(3), td:nth-child(4), td:nth-child(5), th:nth-child(3), th:nth-child(4), th:nth-child(5) { text-align: right; }
+    .post-title { max-width: 390px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border-radius: 999px; background: #f2f4f8; font-size: 11px; font-weight: 750; }
+    .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--badge); }
+    .empty { padding: 36px; color: var(--muted); text-align: center; }
+
+    @media (max-width: 800px) {
+      .app { padding: 28px 16px 40px; }
+      .header { align-items: stretch; flex-direction: column; }
+      .filter-wrap { width: 100%; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .main-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div>
+        <p class="eyebrow">Social Insights</p>
+        <h1>社交媒体数据看板 <small style="font-size: 0.38em; color: var(--muted); vertical-align: middle; letter-spacing: 0;">V1.1</small></h1>
+        <p class="subtitle">快速洞察跨平台内容表现与用户互动情况</p>
+      </div>
+      <div class="filter-wrap">
+        <label for="platformFilter">筛选平台</label>
+        <select id="platformFilter" aria-label="按平台筛选">
+          <option value="All">全部平台</option>
+          <option value="Instagram">Instagram</option>
+          <option value="TikTok">TikTok</option>
+          <option value="YouTube">YouTube</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="kpi-grid" aria-label="关键指标">
+      <article class="card kpi" style="--accent:#5b5bd6;--accent-soft:#eeeeff">
+        <div class="kpi-label">帖子总数</div><div class="kpi-row"><span class="icon">▤</span><strong class="kpi-value" id="postCount">0</strong></div>
+      </article>
+      <article class="card kpi" style="--accent:#20a875;--accent-soft:#e8f8f2">
+        <div class="kpi-label">点赞总数</div><div class="kpi-row"><span class="icon">♥</span><strong class="kpi-value" id="likeCount">0</strong></div>
+      </article>
+      <article class="card kpi" style="--accent:#f39b3d;--accent-soft:#fff3e5">
+        <div class="kpi-label">评论总数</div><div class="kpi-row"><span class="icon">●</span><strong class="kpi-value" id="commentCount">0</strong></div>
+      </article>
+    </section>
+
+    <section class="main-grid">
+      <article class="card panel">
+        <div class="panel-head"><h2 class="panel-title">互动表现</h2><span class="panel-note">点赞 + 评论</span></div>
+        <div class="bars" id="performanceBars"></div>
+      </article>
+      <aside class="card panel">
+        <div class="panel-head"><h2 class="panel-title">平台概览</h2><span class="panel-note" id="scopeLabel">全部</span></div>
+        <div class="summary-list" id="platformSummary"></div>
+      </aside>
+    </section>
+
+    <section class="card table-card">
+      <div class="table-head"><h2 class="panel-title">帖子明细</h2></div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>帖子内容</th><th>平台</th><th>点赞</th><th>评论</th><th>互动率</th></tr></thead>
+          <tbody id="postTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const posts = [
+      { title: "春季新品系列正式发布", platform: "Instagram", likes: 12840, comments: 426, followers: 186000 },
+      { title: "一分钟办公室效率挑战", platform: "TikTok", likes: 28450, comments: 1180, followers: 245000 },
+      { title: "品牌幕后：设计团队的一天", platform: "YouTube", likes: 8920, comments: 534, followers: 132000 },
+      { title: "用户故事｜从灵感到作品", platform: "Instagram", likes: 9650, comments: 318, followers: 186000 },
+      { title: "你不知道的三个实用技巧", platform: "TikTok", likes: 32100, comments: 1426, followers: 245000 },
+      { title: "2026 年行业趋势深度解析", platform: "YouTube", likes: 11460, comments: 792, followers: 132000 },
+      { title: "周末限定活动精彩回顾", platform: "Instagram", likes: 15320, comments: 507, followers: 186000 },
+      { title: "团队默契大测试", platform: "TikTok", likes: 23780, comments: 936, followers: 245000 },
+      { title: "产品使用指南：完整入门篇", platform: "YouTube", likes: 7340, comments: 389, followers: 132000 },
+      { title: "本月最受欢迎作品合集", platform: "Instagram", likes: 17680, comments: 612, followers: 186000 }
+    ];
+
+    const colors = { Instagram: "#d657a5", TikTok: "#30b7b1", YouTube: "#ef5656" };
+    const number = new Intl.NumberFormat("zh-CN");
+    const filter = document.getElementById("platformFilter");
+
+    function render() {
+      const selected = filter.value;
+      const visible = selected === "All" ? posts : posts.filter(post => post.platform === selected);
+      const likes = visible.reduce((sum, post) => sum + post.likes, 0);
+      const comments = visible.reduce((sum, post) => sum + post.comments, 0);
+
+      document.getElementById("postCount").textContent = number.format(visible.length);
+      document.getElementById("likeCount").textContent = number.format(likes);
+      document.getElementById("commentCount").textContent = number.format(comments);
+      document.getElementById("scopeLabel").textContent = selected === "All" ? "全部平台" : selected;
+
+      const platforms = ["Instagram", "TikTok", "YouTube"];
+      const stats = platforms.map(platform => {
+        const items = visible.filter(post => post.platform === platform);
+        return {
+          platform,
+          posts: items.length,
+          engagement: items.reduce((sum, post) => sum + post.likes + post.comments, 0)
+        };
+      }).filter(item => selected === "All" || item.posts > 0);
+
+      const maxEngagement = Math.max(...stats.map(item => item.engagement), 1);
+      document.getElementById("performanceBars").innerHTML = stats.map(item => `
+        <div>
+          <div class="bar-meta"><span class="bar-name">${item.platform}</span><span class="bar-value">${number.format(item.engagement)} 次互动</span></div>
+          <div class="track"><div class="fill" style="--bar:${colors[item.platform]};width:${item.engagement / maxEngagement * 100}%"></div></div>
+        </div>`).join("");
+
+      document.getElementById("platformSummary").innerHTML = stats.map(item => `
+        <div class="summary-item">
+          <div class="summary-left"><span class="dot" style="--dot:${colors[item.platform]}"></span><div><div class="summary-label">${item.platform}</div><div class="summary-sub">${item.posts} 条帖子</div></div></div>
+          <span class="summary-number">${number.format(item.engagement)}</span>
+        </div>`).join("");
+
+      document.getElementById("postTable").innerHTML = visible.length ? visible.map(post => {
+        const rate = (post.likes + post.comments) / post.followers * 100;
+        return `<tr>
+          <td><div class="post-title" title="${post.title}">${post.title}</div></td>
+          <td><span class="badge" style="--badge:${colors[post.platform]}">${post.platform}</span></td>
+          <td>${number.format(post.likes)}</td><td>${number.format(post.comments)}</td><td>${rate.toFixed(1)}%</td>
+        </tr>`;
+      }).join("") : `<tr><td colspan="5" class="empty">暂无数据</td></tr>`;
+    }
+
+    filter.addEventListener("change", render);
+    render();
+  </script>
+</body>
+</html>
