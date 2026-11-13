@@ -32,7 +32,7 @@
 
     .header {
       display: flex;
-      align-items: flex-end;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 24px;
       margin-bottom: 30px;
@@ -50,9 +50,10 @@
     h1 { margin: 0; font-size: clamp(26px, 4vw, 38px); line-height: 1.18; letter-spacing: -0.03em; }
     .subtitle { margin: 10px 0 0; color: var(--muted); font-size: 15px; }
 
-    .filter-wrap { min-width: 190px; }
+    .filters { display: grid; grid-template-columns: repeat(3, minmax(145px, 1fr)); gap: 12px; }
+    .filter-wrap { min-width: 145px; }
     .filter-wrap label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 12px; font-weight: 700; }
-    select {
+    select, input[type="date"] {
       width: 100%;
       padding: 12px 40px 12px 14px;
       border: 1px solid var(--line);
@@ -65,7 +66,22 @@
       box-shadow: 0 4px 12px rgba(37, 48, 74, 0.04);
       cursor: pointer;
     }
-    select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+    select:focus, input[type="date"]:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+
+    .upload-card { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 22px; margin-bottom: 22px; }
+    .upload-copy { min-width: 0; }
+    .upload-title { margin: 0 0 6px; font-size: 15px; }
+    .upload-help { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .upload-actions { display: flex; align-items: center; flex-shrink: 0; gap: 10px; }
+    .file-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; border: 0; border-radius: 11px; background: var(--primary); color: white; font: inherit; font-size: 13px; font-weight: 750; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .button:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(91, 91, 214, 0.22); }
+    .button.secondary { border: 1px solid var(--line); background: white; color: var(--text); box-shadow: none; }
+    .button.secondary:hover { box-shadow: 0 6px 14px rgba(37, 48, 74, 0.08); }
+    .status { margin-top: 8px; font-size: 12px; font-weight: 650; }
+    .status.info { color: var(--primary); }
+    .status.success { color: var(--green); }
+    .status.error { color: #d33f49; }
 
     .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
     .card { background: var(--surface); border: 1px solid rgba(231, 236, 243, 0.8); border-radius: 18px; box-shadow: var(--shadow); }
@@ -97,24 +113,43 @@
     .summary-sub { margin-top: 3px; color: var(--muted); font-size: 11px; }
     .summary-number { font-size: 14px; font-weight: 800; }
 
+    .trend-card { margin-bottom: 22px; }
+    .trend-wrap { width: 100%; overflow-x: auto; }
+    .trend-chart { display: block; width: 100%; min-width: 620px; height: auto; }
+    .chart-grid { stroke: #e8edf4; stroke-width: 1; }
+    .chart-axis { fill: var(--muted); font-size: 11px; }
+    .chart-area { fill: url(#trendGradient); }
+    .chart-line { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .chart-dot { fill: white; stroke: var(--primary); stroke-width: 2.5; }
+    .chart-empty { padding: 34px; color: var(--muted); text-align: center; }
+
     .table-card { overflow: hidden; }
     .table-head { padding: 23px 24px 15px; }
     .table-scroll { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 860px; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
     th, td { padding: 15px 24px; text-align: left; border-top: 1px solid var(--line); font-size: 13px; }
     th { color: var(--muted); background: #fbfcfe; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
-    td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6), th:nth-child(3), th:nth-child(4), th:nth-child(5), th:nth-child(6) { text-align: right; }
+    td:nth-child(4), td:nth-child(5), td:nth-child(6), td:nth-child(7), th:nth-child(4), th:nth-child(5), th:nth-child(6), th:nth-child(7) { text-align: right; }
     .post-title { max-width: 390px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border-radius: 999px; background: #f2f4f8; font-size: 11px; font-weight: 750; }
     .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--badge); }
     .empty { padding: 36px; color: var(--muted); text-align: center; }
 
+    @media (max-width: 1050px) {
+      .header { flex-direction: column; }
+      .filters { width: 100%; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
     @media (max-width: 800px) {
       .app { padding: 28px 16px 40px; }
       .header { align-items: stretch; flex-direction: column; }
+      .filters { grid-template-columns: 1fr; }
       .filter-wrap { width: 100%; }
       .kpi-grid { grid-template-columns: 1fr; }
       .main-grid { grid-template-columns: 1fr; }
+      .upload-card { align-items: stretch; flex-direction: column; }
+      .upload-actions { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -126,16 +161,34 @@
         <h1>社交媒体数据看板 <small style="font-size: 0.38em; color: var(--muted); vertical-align: middle; letter-spacing: 0;">V1.1</small></h1>
         <p class="subtitle">快速洞察跨平台内容表现与用户互动情况</p>
       </div>
-      <div class="filter-wrap">
-        <label for="platformFilter">筛选平台</label>
-        <select id="platformFilter" aria-label="按平台筛选">
-          <option value="All">全部平台</option>
-          <option value="Instagram">Instagram</option>
-          <option value="TikTok">TikTok</option>
-          <option value="YouTube">YouTube</option>
-        </select>
+      <div class="filters" aria-label="数据筛选">
+        <div class="filter-wrap">
+          <label for="platformFilter">筛选平台</label>
+          <select id="platformFilter" aria-label="按平台筛选"></select>
+        </div>
+        <div class="filter-wrap">
+          <label for="dateFrom">开始日期</label>
+          <input type="date" id="dateFrom" aria-label="开始日期">
+        </div>
+        <div class="filter-wrap">
+          <label for="dateTo">结束日期</label>
+          <input type="date" id="dateTo" aria-label="结束日期">
+        </div>
       </div>
     </header>
+
+    <section class="card upload-card" aria-labelledby="uploadTitle">
+      <div class="upload-copy">
+        <h2 class="upload-title" id="uploadTitle">导入真实数据</h2>
+        <p class="upload-help">上传 UTF-8 CSV，仅在当前浏览器本地处理。必需字段：platform、date、content、likes、comments、views；日期格式为 YYYY-MM-DD。</p>
+        <div class="status info" id="dataStatus" role="status" aria-live="polite">当前使用 10 条模拟演示数据。</div>
+      </div>
+      <div class="upload-actions">
+        <input class="file-input" type="file" id="csvFile" accept=".csv,text/csv">
+        <label class="button" for="csvFile">上传 CSV</label>
+        <button class="button secondary" type="button" id="resetData">恢复演示数据</button>
+      </div>
+    </section>
 
     <section class="kpi-grid" aria-label="关键指标">
       <article class="card kpi" style="--accent:#5b5bd6;--accent-soft:#eeeeff">
@@ -163,11 +216,16 @@
       </aside>
     </section>
 
+    <section class="card panel trend-card">
+      <div class="panel-head"><h2 class="panel-title">每日互动量趋势</h2><span class="panel-note">点赞 + 评论</span></div>
+      <div class="trend-wrap" id="trendChart"></div>
+    </section>
+
     <section class="card table-card">
       <div class="table-head"><h2 class="panel-title">帖子明细</h2></div>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>帖子内容</th><th>平台</th><th>点赞</th><th>评论</th><th>浏览量（模拟）</th><th>互动率</th></tr></thead>
+          <thead><tr><th>帖子内容</th><th>平台</th><th>日期</th><th>点赞</th><th>评论</th><th id="viewsHeader">浏览量（模拟）</th><th>互动率</th></tr></thead>
           <tbody id="postTable"></tbody>
         </table>
       </div>
@@ -175,22 +233,141 @@
   </main>
 
   <script>
-    const posts = [
-      { title: "春季新品系列正式发布", platform: "Instagram", likes: 12840, comments: 426, views: 168500 },
-      { title: "一分钟办公室效率挑战", platform: "TikTok", likes: 28450, comments: 1180, views: 412000 },
-      { title: "品牌幕后：设计团队的一天", platform: "YouTube", likes: 8920, comments: 534, views: 126800 },
-      { title: "用户故事｜从灵感到作品", platform: "Instagram", likes: 9650, comments: 318, views: 142300 },
-      { title: "你不知道的三个实用技巧", platform: "TikTok", likes: 32100, comments: 1426, views: 465000 },
-      { title: "2026 年行业趋势深度解析", platform: "YouTube", likes: 11460, comments: 792, views: 158600 },
-      { title: "周末限定活动精彩回顾", platform: "Instagram", likes: 15320, comments: 507, views: 193700 },
-      { title: "团队默契大测试", platform: "TikTok", likes: 23780, comments: 936, views: 358400 },
-      { title: "产品使用指南：完整入门篇", platform: "YouTube", likes: 7340, comments: 389, views: 104200 },
-      { title: "本月最受欢迎作品合集", platform: "Instagram", likes: 17680, comments: 612, views: 221900 }
+    const demoPosts = [
+      { content: "春季新品系列正式发布", platform: "Instagram", date: "2026-10-01", likes: 12840, comments: 426, views: 168500 },
+      { content: "一分钟办公室效率挑战", platform: "TikTok", date: "2026-10-02", likes: 28450, comments: 1180, views: 412000 },
+      { content: "品牌幕后：设计团队的一天", platform: "YouTube", date: "2026-10-03", likes: 8920, comments: 534, views: 126800 },
+      { content: "用户故事｜从灵感到作品", platform: "Instagram", date: "2026-10-04", likes: 9650, comments: 318, views: 142300 },
+      { content: "你不知道的三个实用技巧", platform: "TikTok", date: "2026-10-05", likes: 32100, comments: 1426, views: 465000 },
+      { content: "2026 年行业趋势深度解析", platform: "YouTube", date: "2026-10-06", likes: 11460, comments: 792, views: 158600 },
+      { content: "周末限定活动精彩回顾", platform: "Instagram", date: "2026-10-07", likes: 15320, comments: 507, views: 193700 },
+      { content: "团队默契大测试", platform: "TikTok", date: "2026-10-08", likes: 23780, comments: 936, views: 358400 },
+      { content: "产品使用指南：完整入门篇", platform: "YouTube", date: "2026-10-09", likes: 7340, comments: 389, views: 104200 },
+      { content: "本月最受欢迎作品合集", platform: "Instagram", date: "2026-10-10", likes: 17680, comments: 612, views: 221900 }
     ];
 
-    const colors = { Instagram: "#d657a5", TikTok: "#30b7b1", YouTube: "#ef5656" };
+    const requiredFields = ["platform", "date", "content", "likes", "comments", "views"];
+    const palette = ["#d657a5", "#30b7b1", "#ef5656", "#5b5bd6", "#f39b3d", "#20a875", "#4f8bd8", "#9b6bd6"];
     const number = new Intl.NumberFormat("zh-CN");
-    const filter = document.getElementById("platformFilter");
+    const elements = {
+      platform: document.getElementById("platformFilter"),
+      dateFrom: document.getElementById("dateFrom"),
+      dateTo: document.getElementById("dateTo"),
+      file: document.getElementById("csvFile"),
+      reset: document.getElementById("resetData"),
+      status: document.getElementById("dataStatus")
+    };
+
+    let posts = demoPosts.map(post => ({ ...post }));
+    let isDemoData = true;
+    let sourceStatus = { type: "info", message: "当前使用 10 条模拟演示数据。" };
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>'"]/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;"
+      })[character]);
+    }
+
+    function colorForPlatform(platform, platforms = getPlatforms()) {
+      const index = Math.max(platforms.indexOf(platform), 0);
+      return palette[index % palette.length];
+    }
+
+    function isValidDate(value) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+      const date = new Date(`${value}T00:00:00Z`);
+      return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+    }
+
+    function parseCSVRows(text) {
+      const rows = [[]];
+      let field = "";
+      let inQuotes = false;
+
+      for (let index = 0; index < text.length; index += 1) {
+        const character = text[index];
+        if (inQuotes) {
+          if (character === "\"") {
+            if (text[index + 1] === "\"") {
+              field += "\"";
+              index += 1;
+            } else {
+              inQuotes = false;
+            }
+          } else {
+            field += character;
+          }
+        } else if (character === "\"") {
+          inQuotes = true;
+        } else if (character === ",") {
+          rows[rows.length - 1].push(field);
+          field = "";
+        } else if (character === "\n" || character === "\r") {
+          if (character === "\r" && text[index + 1] === "\n") index += 1;
+          rows[rows.length - 1].push(field);
+          rows.push([]);
+          field = "";
+        } else {
+          field += character;
+        }
+      }
+
+      if (inQuotes) throw new Error("CSV 中存在未闭合的引号。");
+      rows[rows.length - 1].push(field);
+      return rows.filter(row => row.some(value => value.trim() !== ""));
+    }
+
+    function parseMetric(value, field, rowNumber) {
+      const normalized = value == null ? "" : value.trim();
+      const parsed = Number(normalized);
+      if (normalized === "" || !Number.isFinite(parsed) || !Number.isInteger(parsed)) {
+        throw new Error(`第 ${rowNumber} 行的 ${field} 必须是有效整数。`);
+      }
+      if ((field === "likes" || field === "comments") && parsed < 0) {
+        throw new Error(`第 ${rowNumber} 行的 ${field} 不能小于 0。`);
+      }
+      return parsed;
+    }
+
+    function parseCSV(text) {
+      if (typeof text !== "string" || text.trim() === "") throw new Error("CSV 文件为空。");
+      const rows = parseCSVRows(text.replace(/^\uFEFF/, ""));
+      if (!rows.length) throw new Error("CSV 文件为空。");
+
+      const headers = rows[0].map(header => header.trim().toLowerCase());
+      const duplicateHeaders = headers.filter((header, index) => header && headers.indexOf(header) !== index);
+      if (duplicateHeaders.length) throw new Error(`CSV 包含重复字段：${[...new Set(duplicateHeaders)].join("、")}。`);
+
+      const missing = requiredFields.filter(field => !headers.includes(field));
+      if (missing.length) throw new Error(`CSV 缺少必需字段：${missing.join("、")}。`);
+      if (rows.length === 1) throw new Error("CSV 只有表头，未包含数据行。");
+
+      const indexes = Object.fromEntries(requiredFields.map(field => [field, headers.indexOf(field)]));
+      const parsedPosts = [];
+      for (let index = 1; index < rows.length; index += 1) {
+        const row = rows[index];
+        const rowNumber = index + 1;
+        const platform = (row[indexes.platform] || "").trim();
+        const date = (row[indexes.date] || "").trim();
+        const content = (row[indexes.content] || "").trim();
+
+        if (!platform) throw new Error(`第 ${rowNumber} 行的 platform 不能为空。`);
+        if (!content) throw new Error(`第 ${rowNumber} 行的 content 不能为空。`);
+        if (!isValidDate(date)) throw new Error(`第 ${rowNumber} 行的 date 无效，请使用 YYYY-MM-DD 格式。`);
+
+        parsedPosts.push({
+          platform,
+          date,
+          content,
+          likes: parseMetric(row[indexes.likes], "likes", rowNumber),
+          comments: parseMetric(row[indexes.comments], "comments", rowNumber),
+          views: parseMetric(row[indexes.views], "views", rowNumber)
+        });
+      }
+
+      if (!parsedPosts.length) throw new Error("CSV 未包含有效数据行。");
+      return parsedPosts;
+    }
 
     function getEngagementRate(post) {
       return Number.isFinite(post.views) && post.views > 0
@@ -198,56 +375,176 @@
         : null;
     }
 
+    function getPlatforms() {
+      return [...new Set(posts.map(post => post.platform))].sort((a, b) => a.localeCompare(b, "zh-CN"));
+    }
+
+    function setStatus(type, message) {
+      elements.status.className = `status ${type}`;
+      elements.status.textContent = message;
+    }
+
+    function syncFilters() {
+      const platforms = getPlatforms();
+      const previousPlatform = elements.platform.value;
+      elements.platform.replaceChildren();
+      const allOption = document.createElement("option");
+      allOption.value = "";
+      allOption.textContent = "全部平台";
+      elements.platform.appendChild(allOption);
+      platforms.forEach(platform => {
+        const option = document.createElement("option");
+        option.value = platform;
+        option.textContent = platform;
+        elements.platform.appendChild(option);
+      });
+      elements.platform.value = platforms.includes(previousPlatform) ? previousPlatform : "";
+
+      const dates = posts.map(post => post.date).sort();
+      const minimum = dates[0] || "";
+      const maximum = dates[dates.length - 1] || "";
+      [elements.dateFrom, elements.dateTo].forEach(input => {
+        input.min = minimum;
+        input.max = maximum;
+      });
+    }
+
+    function getVisiblePosts() {
+      const selected = elements.platform.value;
+      const from = elements.dateFrom.value;
+      const to = elements.dateTo.value;
+      return posts.filter(post =>
+        (!selected || post.platform === selected) &&
+        (!from || post.date >= from) &&
+        (!to || post.date <= to)
+      );
+    }
+
+    function renderTrend(visible) {
+      const daily = new Map();
+      visible.forEach(post => daily.set(post.date, (daily.get(post.date) || 0) + post.likes + post.comments));
+      const data = [...daily.entries()].sort(([dateA], [dateB]) => dateA.localeCompare(dateB));
+      const container = document.getElementById("trendChart");
+      if (!data.length) {
+        container.innerHTML = '<div class="chart-empty">当前筛选范围内暂无趋势数据</div>';
+        return;
+      }
+
+      const width = 900;
+      const height = 270;
+      const margin = { top: 18, right: 24, bottom: 42, left: 70 };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = height - margin.top - margin.bottom;
+      const maxValue = Math.max(...data.map(([, value]) => value), 1);
+      const x = index => data.length === 1 ? margin.left + plotWidth / 2 : margin.left + index / (data.length - 1) * plotWidth;
+      const y = value => margin.top + plotHeight - value / maxValue * plotHeight;
+      const points = data.map(([, value], index) => `${x(index)},${y(value)}`).join(" ");
+      const areaPoints = `${margin.left},${margin.top + plotHeight} ${points} ${margin.left + plotWidth},${margin.top + plotHeight}`;
+      const grid = Array.from({ length: 5 }, (_, index) => {
+        const value = maxValue * (4 - index) / 4;
+        const gridY = margin.top + plotHeight * index / 4;
+        return `<line class="chart-grid" x1="${margin.left}" y1="${gridY}" x2="${width - margin.right}" y2="${gridY}"></line>
+          <text class="chart-axis" x="${margin.left - 12}" y="${gridY + 4}" text-anchor="end">${escapeHTML(number.format(Math.round(value)))}</text>`;
+      }).join("");
+      const labelStep = Math.max(1, Math.ceil(data.length / 6));
+      const labels = data.map(([date], index) => index % labelStep === 0 || index === data.length - 1
+        ? `<text class="chart-axis" x="${x(index)}" y="${height - 13}" text-anchor="middle">${escapeHTML(date.slice(5))}</text>`
+        : "").join("");
+      const dots = data.map(([date, value], index) => `<circle class="chart-dot" cx="${x(index)}" cy="${y(value)}" r="4"><title>${escapeHTML(date)}：${escapeHTML(number.format(value))} 次互动</title></circle>`).join("");
+
+      container.innerHTML = `<svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="每日互动量趋势图">
+        <defs><linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5b5bd6" stop-opacity="0.28"></stop><stop offset="100%" stop-color="#5b5bd6" stop-opacity="0.02"></stop></linearGradient></defs>
+        ${grid}<polygon class="chart-area" points="${areaPoints}"></polygon><polyline class="chart-line" points="${points}"></polyline>${dots}${labels}
+      </svg>`;
+    }
+
     function render() {
-      const selected = filter.value;
-      const visible = selected === "All" ? posts : posts.filter(post => post.platform === selected);
+      const from = elements.dateFrom.value;
+      const to = elements.dateTo.value;
+      const invalidRange = from && to && from > to;
+      const visible = invalidRange ? [] : getVisiblePosts();
+      setStatus(invalidRange ? "error" : sourceStatus.type, invalidRange ? "开始日期不能晚于结束日期。" : sourceStatus.message);
+
       const likes = visible.reduce((sum, post) => sum + post.likes, 0);
       const comments = visible.reduce((sum, post) => sum + post.comments, 0);
       const validRates = visible.map(getEngagementRate).filter(rate => rate !== null);
-      const averageRate = validRates.length
-        ? validRates.reduce((sum, rate) => sum + rate, 0) / validRates.length
-        : null;
+      const averageRate = validRates.length ? validRates.reduce((sum, rate) => sum + rate, 0) / validRates.length : null;
 
       document.getElementById("postCount").textContent = number.format(visible.length);
       document.getElementById("likeCount").textContent = number.format(likes);
       document.getElementById("commentCount").textContent = number.format(comments);
       document.getElementById("averageEngagementRate").textContent = averageRate === null ? "N/A" : `${averageRate.toFixed(2)}%`;
-      document.getElementById("scopeLabel").textContent = selected === "All" ? "全部平台" : selected;
+      document.getElementById("scopeLabel").textContent = elements.platform.value ? elements.platform.value : "全部平台";
+      document.getElementById("viewsHeader").textContent = isDemoData ? "浏览量（模拟）" : "浏览量";
 
-      const platforms = ["Instagram", "TikTok", "YouTube"];
+      const platforms = getPlatforms();
       const stats = platforms.map(platform => {
         const items = visible.filter(post => post.platform === platform);
-        return {
-          platform,
-          posts: items.length,
-          engagement: items.reduce((sum, post) => sum + post.likes + post.comments, 0)
-        };
-      }).filter(item => selected === "All" || item.posts > 0);
+        return { platform, posts: items.length, engagement: items.reduce((sum, post) => sum + post.likes + post.comments, 0) };
+      }).filter(item => !elements.platform.value || item.platform === elements.platform.value);
 
       const maxEngagement = Math.max(...stats.map(item => item.engagement), 1);
       document.getElementById("performanceBars").innerHTML = stats.map(item => `
-        <div>
-          <div class="bar-meta"><span class="bar-name">${item.platform}</span><span class="bar-value">${number.format(item.engagement)} 次互动</span></div>
-          <div class="track"><div class="fill" style="--bar:${colors[item.platform]};width:${item.engagement / maxEngagement * 100}%"></div></div>
-        </div>`).join("");
+        <div><div class="bar-meta"><span class="bar-name">${escapeHTML(item.platform)}</span><span class="bar-value">${escapeHTML(number.format(item.engagement))} 次互动</span></div>
+        <div class="track"><div class="fill" style="--bar:${colorForPlatform(item.platform, platforms)};width:${item.engagement / maxEngagement * 100}%"></div></div></div>`).join("");
 
       document.getElementById("platformSummary").innerHTML = stats.map(item => `
-        <div class="summary-item">
-          <div class="summary-left"><span class="dot" style="--dot:${colors[item.platform]}"></span><div><div class="summary-label">${item.platform}</div><div class="summary-sub">${item.posts} 条帖子</div></div></div>
-          <span class="summary-number">${number.format(item.engagement)}</span>
-        </div>`).join("");
+        <div class="summary-item"><div class="summary-left"><span class="dot" style="--dot:${colorForPlatform(item.platform, platforms)}"></span><div><div class="summary-label">${escapeHTML(item.platform)}</div><div class="summary-sub">${item.posts} 条帖子</div></div></div>
+        <span class="summary-number">${escapeHTML(number.format(item.engagement))}</span></div>`).join("");
 
+      renderTrend(visible);
       document.getElementById("postTable").innerHTML = visible.length ? visible.map(post => {
         const rate = getEngagementRate(post);
-        return `<tr>
-          <td><div class="post-title" title="${post.title}">${post.title}</div></td>
-          <td><span class="badge" style="--badge:${colors[post.platform]}">${post.platform}</span></td>
-          <td>${number.format(post.likes)}</td><td>${number.format(post.comments)}</td><td>${post.views > 0 ? number.format(post.views) : "N/A"}</td><td>${rate === null ? "N/A" : `${rate.toFixed(2)}%`}</td>
-        </tr>`;
-      }).join("") : `<tr><td colspan="6" class="empty">暂无数据</td></tr>`;
+        return `<tr><td><div class="post-title" title="${escapeHTML(post.content)}">${escapeHTML(post.content)}</div></td>
+          <td><span class="badge" style="--badge:${colorForPlatform(post.platform, platforms)}">${escapeHTML(post.platform)}</span></td>
+          <td>${escapeHTML(post.date)}</td><td>${number.format(post.likes)}</td><td>${number.format(post.comments)}</td><td>${number.format(post.views)}</td><td>${rate === null ? "N/A" : `${rate.toFixed(2)}%`}</td></tr>`;
+      }).join("") : '<tr><td colspan="7" class="empty">暂无数据</td></tr>';
     }
 
-    filter.addEventListener("change", render);
+    async function handleUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        if (file.size > 5 * 1024 * 1024) throw new Error("CSV 文件不能超过 5 MB。");
+        let text;
+        try {
+          text = new TextDecoder("utf-8", { fatal: true }).decode(await file.arrayBuffer());
+        } catch {
+          throw new Error("文件不是有效的 UTF-8 编码。");
+        }
+        const imported = parseCSV(text);
+        posts = imported;
+        isDemoData = false;
+        elements.dateFrom.value = "";
+        elements.dateTo.value = "";
+        const excluded = imported.filter(post => getEngagementRate(post) === null).length;
+        sourceStatus = {
+          type: "success",
+          message: `已从 ${file.name} 导入 ${imported.length} 条本地数据${excluded ? `；${excluded} 条因浏览量不大于 0，不计入平均互动率` : ""}。`
+        };
+        syncFilters();
+        render();
+      } catch (error) {
+        setStatus("error", `导入失败：${error.message}`);
+      } finally {
+        event.target.value = "";
+      }
+    }
+
+    function resetToDemo() {
+      posts = demoPosts.map(post => ({ ...post }));
+      isDemoData = true;
+      elements.dateFrom.value = "";
+      elements.dateTo.value = "";
+      sourceStatus = { type: "info", message: "当前使用 10 条模拟演示数据。" };
+      syncFilters();
+      render();
+    }
+
+    elements.file.addEventListener("change", handleUpload);
+    elements.reset.addEventListener("click", resetToDemo);
+    [elements.platform, elements.dateFrom, elements.dateTo].forEach(element => element.addEventListener("change", render));
+    syncFilters();
     render();
   </script>
 </body>
