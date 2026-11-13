@@ -67,7 +67,7 @@
     }
     select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
 
-    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 22px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
     .card { background: var(--surface); border: 1px solid rgba(231, 236, 243, 0.8); border-radius: 18px; box-shadow: var(--shadow); }
     .kpi { padding: 23px; position: relative; overflow: hidden; }
     .kpi::after { content: ""; position: absolute; right: -20px; top: -25px; width: 90px; height: 90px; border-radius: 50%; background: var(--accent-soft); }
@@ -100,10 +100,10 @@
     .table-card { overflow: hidden; }
     .table-head { padding: 23px 24px 15px; }
     .table-scroll { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    table { width: 100%; border-collapse: collapse; min-width: 860px; }
     th, td { padding: 15px 24px; text-align: left; border-top: 1px solid var(--line); font-size: 13px; }
     th { color: var(--muted); background: #fbfcfe; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
-    td:nth-child(3), td:nth-child(4), td:nth-child(5), th:nth-child(3), th:nth-child(4), th:nth-child(5) { text-align: right; }
+    td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6), th:nth-child(3), th:nth-child(4), th:nth-child(5), th:nth-child(6) { text-align: right; }
     .post-title { max-width: 390px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border-radius: 999px; background: #f2f4f8; font-size: 11px; font-weight: 750; }
     .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--badge); }
@@ -147,6 +147,9 @@
       <article class="card kpi" style="--accent:#f39b3d;--accent-soft:#fff3e5">
         <div class="kpi-label">评论总数</div><div class="kpi-row"><span class="icon">●</span><strong class="kpi-value" id="commentCount">0</strong></div>
       </article>
+      <article class="card kpi" style="--accent:#d657a5;--accent-soft:#fcecf6">
+        <div class="kpi-label">平均互动率 · 基于模拟浏览量</div><div class="kpi-row"><span class="icon">%</span><strong class="kpi-value" id="averageEngagementRate">N/A</strong></div>
+      </article>
     </section>
 
     <section class="main-grid">
@@ -164,7 +167,7 @@
       <div class="table-head"><h2 class="panel-title">帖子明细</h2></div>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>帖子内容</th><th>平台</th><th>点赞</th><th>评论</th><th>互动率</th></tr></thead>
+          <thead><tr><th>帖子内容</th><th>平台</th><th>点赞</th><th>评论</th><th>浏览量（模拟）</th><th>互动率</th></tr></thead>
           <tbody id="postTable"></tbody>
         </table>
       </div>
@@ -173,31 +176,42 @@
 
   <script>
     const posts = [
-      { title: "春季新品系列正式发布", platform: "Instagram", likes: 12840, comments: 426, followers: 186000 },
-      { title: "一分钟办公室效率挑战", platform: "TikTok", likes: 28450, comments: 1180, followers: 245000 },
-      { title: "品牌幕后：设计团队的一天", platform: "YouTube", likes: 8920, comments: 534, followers: 132000 },
-      { title: "用户故事｜从灵感到作品", platform: "Instagram", likes: 9650, comments: 318, followers: 186000 },
-      { title: "你不知道的三个实用技巧", platform: "TikTok", likes: 32100, comments: 1426, followers: 245000 },
-      { title: "2026 年行业趋势深度解析", platform: "YouTube", likes: 11460, comments: 792, followers: 132000 },
-      { title: "周末限定活动精彩回顾", platform: "Instagram", likes: 15320, comments: 507, followers: 186000 },
-      { title: "团队默契大测试", platform: "TikTok", likes: 23780, comments: 936, followers: 245000 },
-      { title: "产品使用指南：完整入门篇", platform: "YouTube", likes: 7340, comments: 389, followers: 132000 },
-      { title: "本月最受欢迎作品合集", platform: "Instagram", likes: 17680, comments: 612, followers: 186000 }
+      { title: "春季新品系列正式发布", platform: "Instagram", likes: 12840, comments: 426, views: 168500 },
+      { title: "一分钟办公室效率挑战", platform: "TikTok", likes: 28450, comments: 1180, views: 412000 },
+      { title: "品牌幕后：设计团队的一天", platform: "YouTube", likes: 8920, comments: 534, views: 126800 },
+      { title: "用户故事｜从灵感到作品", platform: "Instagram", likes: 9650, comments: 318, views: 142300 },
+      { title: "你不知道的三个实用技巧", platform: "TikTok", likes: 32100, comments: 1426, views: 465000 },
+      { title: "2026 年行业趋势深度解析", platform: "YouTube", likes: 11460, comments: 792, views: 158600 },
+      { title: "周末限定活动精彩回顾", platform: "Instagram", likes: 15320, comments: 507, views: 193700 },
+      { title: "团队默契大测试", platform: "TikTok", likes: 23780, comments: 936, views: 358400 },
+      { title: "产品使用指南：完整入门篇", platform: "YouTube", likes: 7340, comments: 389, views: 104200 },
+      { title: "本月最受欢迎作品合集", platform: "Instagram", likes: 17680, comments: 612, views: 221900 }
     ];
 
     const colors = { Instagram: "#d657a5", TikTok: "#30b7b1", YouTube: "#ef5656" };
     const number = new Intl.NumberFormat("zh-CN");
     const filter = document.getElementById("platformFilter");
 
+    function getEngagementRate(post) {
+      return Number.isFinite(post.views) && post.views > 0
+        ? (post.likes + post.comments) / post.views * 100
+        : null;
+    }
+
     function render() {
       const selected = filter.value;
       const visible = selected === "All" ? posts : posts.filter(post => post.platform === selected);
       const likes = visible.reduce((sum, post) => sum + post.likes, 0);
       const comments = visible.reduce((sum, post) => sum + post.comments, 0);
+      const validRates = visible.map(getEngagementRate).filter(rate => rate !== null);
+      const averageRate = validRates.length
+        ? validRates.reduce((sum, rate) => sum + rate, 0) / validRates.length
+        : null;
 
       document.getElementById("postCount").textContent = number.format(visible.length);
       document.getElementById("likeCount").textContent = number.format(likes);
       document.getElementById("commentCount").textContent = number.format(comments);
+      document.getElementById("averageEngagementRate").textContent = averageRate === null ? "N/A" : `${averageRate.toFixed(2)}%`;
       document.getElementById("scopeLabel").textContent = selected === "All" ? "全部平台" : selected;
 
       const platforms = ["Instagram", "TikTok", "YouTube"];
@@ -224,13 +238,13 @@
         </div>`).join("");
 
       document.getElementById("postTable").innerHTML = visible.length ? visible.map(post => {
-        const rate = (post.likes + post.comments) / post.followers * 100;
+        const rate = getEngagementRate(post);
         return `<tr>
           <td><div class="post-title" title="${post.title}">${post.title}</div></td>
           <td><span class="badge" style="--badge:${colors[post.platform]}">${post.platform}</span></td>
-          <td>${number.format(post.likes)}</td><td>${number.format(post.comments)}</td><td>${rate.toFixed(1)}%</td>
+          <td>${number.format(post.likes)}</td><td>${number.format(post.comments)}</td><td>${post.views > 0 ? number.format(post.views) : "N/A"}</td><td>${rate === null ? "N/A" : `${rate.toFixed(2)}%`}</td>
         </tr>`;
-      }).join("") : `<tr><td colspan="5" class="empty">暂无数据</td></tr>`;
+      }).join("") : `<tr><td colspan="6" class="empty">暂无数据</td></tr>`;
     }
 
     filter.addEventListener("change", render);
